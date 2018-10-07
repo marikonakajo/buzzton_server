@@ -5,16 +5,14 @@ const PORT = process.env.PORT || 8888;
 const mode = process.env.NODE_ENV;
 
 app.get(
-  '/list',
+  '/version',
   (req: Express.Request, res: Express.Response) => {
     return res.json({
-      type: 'list',
-      data: [
-        {
-          aa : mode,
-          bb : 'bbb',
-        },
-      ],
+      type: 'server_version',
+      data: {
+        version: 1.0,
+        description: 'buzzton server',
+      },
     });
   });
 
