@@ -1,0 +1,23 @@
+nodeapp:
+  build: .
+  container_name: nodeapp
+  command: yarn run dev
+  tty: true
+  ports:
+    - '8888:8888'
+  environment:
+    - PORT=8888
+  volumes:
+    - ./server:/app
+    - /app/node_modules
+    - www:/app/out
+nginx:
+  image: nginx
+  container_name: nginx
+  ports:
+    - '8080:8080'
+  volumes:
+    - ./nginx:/etc/nginx/conf.d:ro
+    - www:/www/app:ro
+  links:
+    - 'nodeapp'
