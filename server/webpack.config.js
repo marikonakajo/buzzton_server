@@ -1,7 +1,6 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const NodemonPlugin = require('nodemon-webpack-plugin');
-
 module.exports = env => {
   const mode = (env && env.production) ? 'production' : 'development'
   const devtool = (env && env.production) ? false : true
@@ -14,29 +13,33 @@ module.exports = env => {
     module: {
       rules: [
         {
-          enforce: 'pre',
-          loader: 'tslint-loader',
           test: /\.ts$/,
-          exclude: [
-            /node_modules/
-          ],
-          options: {
-            emitErrors: true
-          }
+          enforce: 'pre',
+          use: [
+            {
+              loader: 'tslint-loader',
+              options: {
+                emitErrors: true,
+                typeCheck: true,
+                tsConfigFile: (mode == 'production') ? 'tsconfig.prod.json' : 'tsconfig.dev.json',
+              }
+            }
+          ]
         },
         {
-          loader: 'ts-loader',
           test: /\.ts$/,
-          exclude: [
-            /node_modules/
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                configFile: (mode == 'production') ? 'tsconfig.prod.json' : 'tsconfig.dev.json'
+              }
+            }
           ],
-          options: {
-            configFile: (mode == 'production') ? 'tsconfig.prod.json' : 'tsconfig.dev.json'
-          }
         }
       ]
     },
-    plugins: [
+    plugins: (mode == 'production') ? [] : [
       new NodemonPlugin()
     ],
     resolve: {

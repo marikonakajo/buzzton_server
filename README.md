@@ -17,7 +17,11 @@ execute container as foreground process
 
 ## login to node container
 
+### login to nodeapp
 `docker exec -it nodeapp /bin/sh`
+
+### login to nginx
+`docker exec -it nginx /bin/sh`
 
 ## stop & start container
 
@@ -31,3 +35,14 @@ execute container as foreground process
 ### check api
 
 curl -X GET http://127.0.0.1:8080/api/version
+
+
+## how to develop server
+
+exec the following command in server directory
+
+`yarn run dev`
+
+## compile code for production
+
+`yarn run build`

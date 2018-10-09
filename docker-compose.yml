@@ -1,7 +1,7 @@
 nodeapp:
   build: .
   container_name: nodeapp
-  command: yarn run dev
+  command: node index.js
   tty: true
   ports:
     - '8888:8888'
@@ -10,6 +10,7 @@ nodeapp:
   volumes:
     - ./server:/app
     - /app/node_modules
+    - /app/db
     - www:/app/out
 nginx:
   image: nginx
