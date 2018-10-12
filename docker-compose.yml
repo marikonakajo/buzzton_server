@@ -1,3 +1,18 @@
+mongodb:
+  image: mongo:latest
+  environment:
+    - MONGO_DATA_DIR=/data/db
+    - MONGO_LOG_DIR=/dev/null
+  ports:
+    - 27017:27017
+  command:
+    - mongod
+  volumes:
+    - ./data/mongo:/data/db
+init_db:
+  build: data/init
+  links:
+    - mongodb
 nodeapp:
   build: .
   container_name: nodeapp
@@ -7,11 +22,13 @@ nodeapp:
     - '8888:8888'
   environment:
     - PORT=8888
+    - MONGODB_URI=mongodb://mongodb/buzztondb
   volumes:
     - ./server:/app
     - /app/node_modules
-    - /app/db
     - www:/app/out
+  links:
+    - mongodb
 nginx:
   image: nginx
   container_name: nginx

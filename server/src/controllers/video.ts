@@ -5,47 +5,56 @@ import * as multer from 'multer';
 import * as uuidv1 from 'uuid/v1';
 import * as ffmpeg from 'fluent-ffmpeg';
 
+import logger from '../util/logger';
+
+import video, { default as Video } from '../models/video';
+import { default as userModel, userType } from '../models/user';
+
 const uploaddir = path.join('upload');
 const router = Express.Router();
 const upload = multer({ dest: uploaddir });
 
-const list:any[] = [];
+let defaultUser:userType;
+
+userModel.findOne({ id: 'a' }, (err, user: userType) => {
+  defaultUser = user;
+});
 
 /**
  * Response video lists
  */
 router.get('/', (req: Express.Request, res: Express.Response) => {
-  list.push();
-  return res.json({
-    videos: list,
+  video.find({ vaild:true }).exec((err, docs) => {
+    return res.json({
+      videos: docs,
+    });
   });
 });
 
+/**
+ * upload video
+ */
 router.post(
   '/',
   upload.single('video'),
   (req: Express.Request, res: Express.Response) => {
     const uuid = uuidv1();
     if (req.file) {
-      console.log(req.file);
-      console.log(req.file.path);
-      console.log(req.file.filename);
-
       if (req.file.path) { // file found
-        console.log(`video id = ${uuid}`);
         // check file format
         if (/\.mp4/i.test(req.file.originalname)) {
-          const resdata = {
+          const video = new Video({
             id: uuid,
+            user: defaultUser,
             url: `/${uuid}/video.m3u8`,
-            userid: 'user1',
-            username: 'user1 name',
-            reactions: {},
-            rank: (list.length + 1),
+            vaild: true,
+            rank: 1,
             comments: [],
             tags: [],
-            timestamp: new Date(),
-          };
+            reactions: {
+              good: [],
+            },
+          });
 
           // create directory in output directory
           fs.mkdirSync(`out/${uuid}`);
@@ -57,31 +66,35 @@ router.post(
             '-c:a copy',
           ])
           .on('progress', (progress, stdout, stderr) => {
-            console.log(`progress: ${progress.percent}%`);
+            logger.debug(`progress: ${progress.percent}%`);
           })
           .on('stderr', (stderr) => {
-            console.log(`stderr: ${stderr}`);
+            logger.error(`stderr: ${stderr}`);
           })
           .on('error', (err, stdout, stderr) => {
-            console.log(`Cannot process video: ${err.message}`);
+            logger.error(`Cannot process video: ${err.message}`);
 
             // remove temporary file
             fs.unlink(req.file.path, (err) => {
               if (err) {
-                console.log('error. unlink file');
+                logger.error('error. unlink file');
               }
             });
           })
           .on('end', (stdout, stderr) => {
-            console.log('Transcoding succeeded !');
+            logger.info(`Transcoding succeeded! video-id:${uuid}, uploaded by ${defaultUser.name}`);
 
-            // regist object to list
-            list.push(resdata);
+            // save
+            video.save((err) => {
+              if (err) {
+                logger.error(err);
+              }
+            });
 
             // remove temporary file
             fs.unlink(req.file.path, (err) => {
               if (err) {
-                console.log('error. unlink file');
+                logger.error('error. unlink file');
               }
             });
           })
@@ -89,11 +102,11 @@ router.post(
           .run();
 
           // when success
-          return res.send(resdata);
+          return res.json(video);
         }
       }
     } else {
-      console.log('no file found');
+      logger.error('No file found in uploaded request body.');
     }
 
     return res.send(400);
