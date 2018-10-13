@@ -32,17 +32,22 @@ Response Body:
 
 ```json
 {
-  videos: [
+  "videos": [
     {
-      id: "動画のID (例: 22387da0-cae1-11e8-8760-b5fb1d75187d)",
-      url: "動画のURL m3u8ファイル (例: /22387da0-cae1-11e8-8760-b5fb1d75187d/video.m3u8)",
-      userid: "ユーザーID (例: user1)",
-      username: "ユーザー名 (例: ばずとん)",
-      reactions: {},
-      rank: "ランキング数値 (例: 1)",
-      comments: [],
-      tags: [],
-      timestamp: "登録された日付 (例: 2018-10-08T08:19:41.817Z)",
+      "reactions": {
+        "good": []
+      },
+      "comments": [],
+      "tags": [],
+      "_id": "動画 docid (例: 5bc0be56cc0e070026683b95)",
+      "id": "動画のID (例: e681f290-ce33-11e8-8c09-a70871eb6645)",
+      "user": "動画作成ユーザー docid (例: 5bc0bdd7cb033538fc30ec46)", 
+      "url": "動画のURL m3u8 (例: /e681f290-ce33-11e8-8c09-a70871eb6645/video.m3u8)",
+      "vaild": true,  //(true:有効, false:無効)
+      "rank": 1, //ランキング数値
+      "createdAt": "作成日  (例: 2018-10-12T15:31:34.292Z)",
+      "updatedAt": "更新日  (例: 2018-10-12T15:31:34.292Z)",
+      "__v": 0
     }
   ]
 }
@@ -89,14 +94,20 @@ Response Body:
 
 ```json
 {
-  id: "動画のID (例: 22387da0-cae1-11e8-8760-b5fb1d75187d)",
-  url: "動画のURL m3u8ファイル (例: /22387da0-cae1-11e8-8760-b5fb1d75187d/video.m3u8)",
-  userid: "ユーザーID (例: user1)",
-  username: "ユーザー名 (例: ばずとん)",
-  reactions: {},
-  rank: "ランキングは未計算のため利用不可",
-  comments: [],
-  tags: [],
-  timestamp: "登録された日付 (例: 2018-10-08T08:19:41.817Z)",
+  "reactions": {
+    "good": []
+  },
+  "comments": [],
+  "tags": [],
+  "_id": "動画 docid (例: 5bc0be56cc0e070026683b95)",
+  "id": "動画のID (例: e681f290-ce33-11e8-8c09-a70871eb6645)",
+  "user": {
+    "_id": "ユーザー docid (例: 5bc0bdd7cb033538fc30ec46)",
+    "id": "ユーザーID (例: a)",
+    "name": "ユーザー名 (例: moto)"
+  },
+  "url": "動画のURL m3u8 (例: /e681f290-ce33-11e8-8c09-a70871eb6645/video.m3u8)",
+  "vaild": true, //(true:有効, false:無効)
+  "rank": 1 //ランキング数値
 }
 ```
