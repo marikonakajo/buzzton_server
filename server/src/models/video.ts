@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import { userModel, commentModel, userType, commentType } from './user';
-import { reactionModel, reactionType } from './reaction';
+import * as mongoose from 'mongoose';
+import { userType, commentType } from './user';
+import { reactionType } from './reaction';
 
 const Schema = mongoose.Schema;
 
@@ -28,18 +28,18 @@ export type videoType = mongoose.Document & {
 const videoSchema = new mongoose.Schema(
   {
     id: String,
-    user: { type: userModel, ref: 'User' },
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
     url: String,
     vaild: Boolean,
     rank: Number,
-    comments: { type: [commentModel], ref: 'Comment' },
-    tags: { type: [tag], ref: 'Tag' },
+    comments: { type: [Schema.Types.ObjectId], ref: 'Comment' },
+    tags: { type: [Schema.Types.ObjectId], ref: 'Tag' },
     reactions: {
-      good: { type: [reactionModel], ref: 'Reaction' },
+      good: { type: [Schema.Types.ObjectId], ref: 'Reaction' },
     },
   },
   { timestamps: true },
 );
 
-const videoModel = mongoose.model('User', videoSchema);
+const videoModel = mongoose.model('Video', videoSchema);
 export default videoModel;

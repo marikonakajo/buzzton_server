@@ -7,7 +7,7 @@ import * as ffmpeg from 'fluent-ffmpeg';
 
 import logger from '../util/logger';
 
-import video, { default as Video } from '../models/video';
+import video, { default as Video, videoType } from '../models/video';
 import { default as userModel, userType } from '../models/user';
 
 const uploaddir = path.join('upload');
@@ -16,7 +16,7 @@ const upload = multer({ dest: uploaddir });
 
 let defaultUser:userType;
 
-userModel.findOne({ id: 'a' }, (err, user: userType) => {
+userModel.findOne({ id: 'a' }, (err: any, user: userType) => {
   defaultUser = user;
 });
 
@@ -24,12 +24,22 @@ userModel.findOne({ id: 'a' }, (err, user: userType) => {
  * Response video lists
  */
 router.get('/', (req: Express.Request, res: Express.Response) => {
-  video.find({ vaild:true }).exec((err, docs) => {
+  video.find({ vaild:true })
+  .populate('user')
+  .exec((err: any, docs: videoType[]) => {
     return res.json({
       videos: docs,
     });
   });
 });
+
+/**
+ * comment to video
+ */
+
+ /**
+  * reaction
+  */
 
 /**
  * upload video
@@ -39,10 +49,13 @@ router.post(
   upload.single('video'),
   (req: Express.Request, res: Express.Response) => {
     const uuid = uuidv1();
+    console.log(req.file);
     if (req.file) {
       if (req.file.path) { // file found
         // check file format
         if (/\.mp4/i.test(req.file.originalname)) {
+          console.log(req.body);
+
           const video = new Video({
             id: uuid,
             user: defaultUser,
@@ -85,7 +98,7 @@ router.post(
             logger.info(`Transcoding succeeded! video-id:${uuid}, uploaded by ${defaultUser.name}`);
 
             // save
-            video.save((err) => {
+            video.save((err: any) => {
               if (err) {
                 logger.error(err);
               }
@@ -107,6 +120,7 @@ router.post(
       }
     } else {
       logger.error('No file found in uploaded request body.');
+      return res.status(400).json({ message: 'No file found in uploaded request body.' });
     }
 
     return res.send(400);

@@ -1,19 +1,18 @@
 import * as Express from 'express';
-import compression from 'compression';
-import expressSession from 'express-session';
-import logger from './util/logger';
-import bodyParser from 'body-parser';
-import connectMongo from 'connect-mongo';
-import bluebird from 'bluebird';
-import mongoose from 'mongoose';
+import * as compression from 'compression';
+import * as expressSession from 'express-session';
+import * as bodyParser from 'body-parser';
+import * as connectMongo from 'connect-mongo';
+import * as bluebird from 'bluebird';
+import * as mongoose from 'mongoose';
 
 const mongoStore = connectMongo(expressSession);
-// Connect to MongoDB
-const mongoUrl = process.env.MONGODB_URI || 'mongo';
+// Connect to MongoDB // process.env.MONGODB_URI ||
+const mongoUrl = 'mongodb://mongodb/buzztondb';
 (<any>mongoose).Promise = bluebird;
-mongoose.connect(mongoUrl, { useMongoClient: true }).then(
+mongoose.connect(mongoUrl, { useNewUrlParser: true }).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
-).catch((err) => {
+).catch((err:any) => {
   console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
   // process.exit();
 });
@@ -22,7 +21,7 @@ const app = Express();
 app.set('port', process.env.PORT || 8888);
 app.use(compression());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit:'5mb', extended: true, parameterLimit: 100000 }));
 app.use(expressSession({
   resave: true,
   saveUninitialized: true,

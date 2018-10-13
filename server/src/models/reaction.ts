@@ -1,5 +1,6 @@
-import mongoose from 'mongoose';
-import user, { userType } from './user';
+import * as mongoose from 'mongoose';
+import { userType } from './user';
+import { videoType } from './video';
 
 const Schema = mongoose.Schema;
 
