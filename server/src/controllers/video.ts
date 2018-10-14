@@ -26,7 +26,7 @@ userModel.findOne({ id: 'a' }, (err: any, user: userType) => {
 router.get(
   '/',
   (req: Express.Request, res: Express.Response) => {
-    video.find({ vaild:true })
+    video.find()
     .populate('user')
     .exec((err: any, docs: videoType[]) => {
       return res.json({
@@ -147,6 +147,67 @@ router.post(
 );
 
 /**
+ * update video
+ */
+router.put(
+  '/:id',
+  (req: Express.Request, res: Express.Response) => {
+    const videoId = req.params.id;
+    const message = req.body.message;
+    if (message) {
+      const messageTags: string[] = findTags(message);
+      video.findOne({ vaild:true, id: videoId })
+      .populate('user')
+      .populate({ path: 'comments', populate: {
+        path: 'user',
+        model: userModel,
+      }})
+      .exec((err: any, doc: videoType) => {
+        doc.message = message;
+        doc.tags = messageTags;
+        doc.save();
+        return res.json(doc);
+      });
+    } else {
+      return res.send(400);
+    }
+  },
+);
+
+/**
+ * modify valid/invalid video
+ */
+router.patch(
+  '/:id',
+  (req: Express.Request, res: Express.Response) => {
+    const videoId = req.params.id;
+    const valid = req.body.valid;
+    if (valid != null) {
+      video.findOne({ id: videoId })
+      .exec((err: any, doc: videoType) => {
+        doc.vaild = valid;
+        doc.save();
+      });
+    }
+    return res.send(200);
+  },
+);
+
+/**
+ * delete video
+ */
+router.delete(
+  '/:id',
+  (req: Express.Request, res: Express.Response) => {
+    const videoId = req.params.id;
+    video.deleteOne({ vaild:false, id: videoId })
+    .exec((err: any) => {
+      return res.send(200);
+    });
+  },
+);
+
+/**
  * comment to video
  */
 router.post(
@@ -163,7 +224,6 @@ router.post(
           comment.save();
           doc.comments.push(comment._id);
           doc.save();
-          console.log(doc);
         }
       });
       return res.send(200);
@@ -172,8 +232,34 @@ router.post(
   },
 );
 
+/**
+ * delete comment of video
+ */
+router.delete(
+  '/:id/comments/:commentid',
+  (req: Express.Request, res: Express.Response) => {
+    const videoId = req.params.id;
+    const commentId: string = req.params.commentid;
+    video.findOne({ vaild:true, id: videoId })
+    .exec((err: any, doc: videoType) => {
+      if (doc) {
+        const comments = doc.comments;
+        comments.forEach((c, i) => {
+          if (c.id === commentId) {
+            comments.splice(i, 1);
+          }
+        });
+        doc.comments = comments;
+        commentModel.deleteOne({ _id: commentId }).exec();
+        doc.save();
+      }
+    });
+    return res.send(200);
+  },
+);
+
  /**
-  * reaction
+  * reaction like
   */
 router.post(
   '/:id/reactions/like',
@@ -184,6 +270,28 @@ router.post(
       .exec((err: any, doc: videoType) => {
         if (doc) {
           doc.reactions.like = doc.reactions.like + 1;
+          doc.save();
+        }
+      });
+      return res.send(200);
+    }
+    return res.send(400);
+  },
+);
+
+/**
+  * reaction unlike
+  */
+router.delete(
+  '/:id/reactions/like',
+  (req: Express.Request, res: Express.Response) => {
+    if (req.body && req.body.message) {
+      const videoId = req.params.id;
+      video.findOne({ vaild:true, id: videoId })
+      .exec((err: any, doc: videoType) => {
+        if (doc) {
+          doc.reactions.like = doc.reactions.like - 1;
+          if (doc.reactions.like < 0) doc.reactions.like = 0;
           doc.save();
         }
       });

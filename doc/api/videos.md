@@ -199,6 +199,147 @@ Response Body:
 }
 ```
 
+## 動画のコメントを修正する
+
+Path : `/api/videos/:id`
+
+Method: `PUT`
+
+Request Header:
+
+```
+Content-Type: application/json
+```
+
+Request Parameter:
+
+```
+id : `動画のID`
+```
+
+Request Body:
+
+```json
+{
+	"message": "すごい発見をしたので共有 #感激"
+}
+```
+
+Response Status Code:
+
+```
+成功: 200
+```
+
+Response Body:
+
+```json
+{
+  "reactions": {
+    "like": 0
+  },
+  "comments": [
+    {
+      "_id": "5bc2b88c1711b303b7503131",
+      "text": "その発想はなかった！",
+      "user": {
+        "_id": "5bc0bdd7cb033538fc30ec46",
+        "id": "a",
+        "name": "moto"
+      },
+      "like": 0,
+      "__v": 0
+    }
+  ],
+  "tags": [
+    "#感激"
+  ],
+  "_id": "5bc2b6ef1711b303b7503130",
+  "id": "aa6117e0-cf60-11e8-bb50-73a7036a9d0f",
+  "user": {
+    "_id": "5bc0bdd7cb033538fc30ec46",
+    "id": "a",
+    "name": "moto"
+  },
+  "url": "/aa6117e0-cf60-11e8-bb50-73a7036a9d0f/video.m3u8",
+  "vaild": true,
+  "rank": 1,
+  "message": "すごい発見をしたので共有 #感激",
+  "createdAt": "2018-10-14T03:24:31.859Z",
+  "updatedAt": "2018-10-14T03:31:24.164Z",
+  "__v": 1
+}
+```
+
+## 動画を無効にする
+
+Path : `/api/videos/:id`
+
+Method: `PATCH`
+
+Request Header:
+
+```
+Content-Type: application/json
+```
+
+Request Parameter:
+
+```
+id : `動画のID`
+```
+
+Request Body:
+
+```json
+{
+  "valid": false
+}
+```
+
+Response Status Code:
+
+```
+成功: 200
+```
+
+Response Body:
+```
+```
+
+## 動画を削除する
+
+Path : `/api/videos/:id`
+
+Method: `DELETE`
+
+Request Header:
+
+```
+```
+
+Request Parameter:
+
+```
+id : `動画のID`
+```
+
+Request Body:
+
+```
+```
+
+Response Status Code:
+
+```
+成功: 200
+```
+
+Response Body:
+```
+```
+
+
 ## 動画にコメントする
 
 Path : `/api/videos/:id/comments`
@@ -236,6 +377,41 @@ Response Body:
 ```
 ```
 
+## 動画のコメントを削除する
+
+Path : `/api/videos/:id/comments/:commentid`
+
+Method: `DELETE`
+
+Request Header:
+
+```
+Content-Type: application/json
+```
+
+Request Parameter:
+
+```
+id : `動画のID`
+commentid: `コメントID`
+```
+
+Request Body:
+
+```
+```
+
+Response Status Code:
+
+```
+成功: 200
+```
+
+Response Body:
+
+```
+```
+
 ## 動画にリアクション(Like)する
 
 Path : `/api/videos/:id/reactions/like`
@@ -245,7 +421,39 @@ Method: `POST`
 Request Header:
 
 ```
-Content-Type: application/json
+```
+
+Request Parameter:
+
+```
+id : `動画のID`
+```
+
+Request Body:
+
+```
+```
+
+Response Status Code:
+
+```
+成功: 200
+```
+
+Response Body:
+
+```
+```
+
+## 動画のリアクション(Like)を取り消す
+
+Path : `/api/videos/:id/reactions/like`
+
+Method: `DELETE`
+
+Request Header:
+
+```
 ```
 
 Request Parameter:

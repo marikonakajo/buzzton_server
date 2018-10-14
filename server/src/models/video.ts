@@ -9,8 +9,8 @@ export type videoType = mongoose.Document & {
   url: string,
   vaild: boolean,
   rank: number,
-  comments: [commentType],
-  tags: [string],
+  comments: commentType[],
+  tags: string[],
   message: string,
   reactions: {
     like : number,
