@@ -2,8 +2,8 @@ import * as mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export type userType = mongoose.Document & {
-  name: String,
-  id: String,
+  name: string,
+  id: string,
 };
 const userSchema = new Schema({
   name: String,
@@ -12,12 +12,12 @@ const userSchema = new Schema({
 
 export type commentType = mongoose.Document & {
   user: userType,
-  good: Number,
-  text: String,
+  like: number,
+  text: string,
 };
 const commentSchema = new Schema({
   user: { type: Schema.Types.ObjectId, ref: 'User' },
-  good: Number,
+  like: Number,
   text: String,
 });
 

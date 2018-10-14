@@ -1,27 +1,19 @@
 import * as mongoose from 'mongoose';
 import { userType, commentType } from './user';
-import { reactionType } from './reaction';
 
 const Schema = mongoose.Schema;
 
-export type tagType = mongoose.Document & {
-  name: String;
-};
-const tagSchema = new Schema({
-  name: String,
-});
-const tag = mongoose.model('Tag', tagSchema);
-
 export type videoType = mongoose.Document & {
-  id: String,
+  id: string,
   user: userType,
-  url: String,
-  vaild: Boolean,
-  rank: Number,
+  url: string,
+  vaild: boolean,
+  rank: number,
   comments: [commentType],
-  tags: [tagType],
+  tags: [string],
+  message: string,
   reactions: {
-    good: [reactionType],
+    like : number,
   },
 };
 
@@ -32,10 +24,11 @@ const videoSchema = new mongoose.Schema(
     url: String,
     vaild: Boolean,
     rank: Number,
-    comments: { type: [Schema.Types.ObjectId], ref: 'Comment' },
-    tags: { type: [Schema.Types.ObjectId], ref: 'Tag' },
+    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
+    tags: [String],
+    message: String,
     reactions: {
-      good: { type: [Schema.Types.ObjectId], ref: 'Reaction' },
+      like: Number,
     },
   },
   { timestamps: true },
