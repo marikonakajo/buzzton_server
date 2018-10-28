@@ -10,7 +10,12 @@ const mongoStore = connectMongo(expressSession);
 // Connect to MongoDB // process.env.MONGODB_URI ||
 const mongoUrl = 'mongodb://mongodb/buzztondb';
 (<any>mongoose).Promise = bluebird;
-mongoose.connect(mongoUrl, { useNewUrlParser: true }).then(
+mongoose.connect(mongoUrl, {
+  useNewUrlParser: true,
+  autoReconnect: true,
+  reconnectTries: 10,
+  reconnectInterval: 10,
+}).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
 ).catch((err:any) => {
   console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`);
@@ -47,7 +52,7 @@ app.get(
     return res.json({
       type: 'server_version',
       data: {
-        version: 1.0,
+        version: 1.01,
         description: 'buzzton server',
       },
     });
