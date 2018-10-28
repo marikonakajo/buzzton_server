@@ -6,20 +6,16 @@ RUN apk add yarn
 RUN yarn global add nodemon
 #
 RUN mkdir /app
+### movie store (temporary)
+RUN mkdir /app/upload
+RUN mkdir /app/out
+
 # work directory
 WORKDIR /app
 # copy
 COPY ./server/package.json /app/package.json
 # install packages
 RUN yarn install
-
-### movie store (temporary)
-RUN mkdir /app/upload
-
-### install sqlite
-# SQLite
-RUN apk add sqlite
-RUN mkdir /app/db
 
 ### install ffmpeg
 ## refs https://github.com/rickydunlop/nodejs-ffmpeg

@@ -4,8 +4,8 @@ mongodb:
   environment:
     - MONGO_DATA_DIR=/data/db
     - MONGO_LOG_DIR=/dev/null
-  ports:
-    - 27017:27017
+  expose:
+    - '27017'
   command:
     - mongod
   volumes:
@@ -17,10 +17,10 @@ init_db:
 nodeapp:
   build: .
   container_name: nodeapp
-  command: nodemon index.js
+  command: node index.js
   tty: true
-  ports:
-    - '8888:8888'
+  expose:
+    - '8888'
   environment:
     - PORT=8888
     - MONGODB_URI=mongodb://mongodb/buzztondb
@@ -34,9 +34,11 @@ nginx:
   image: nginx
   container_name: nginx
   ports:
-    - '8080:8080'
+    - '443:443'
   volumes:
     - ./nginx:/etc/nginx/conf.d:ro
+    - ./nginx/static:/www/static
+    - ./nginx/cert:/etc/cert:ro
     - www:/www/app:ro
   links:
     - 'nodeapp'

@@ -4,19 +4,28 @@ buzztone server
 
 ## how to start server
 
+### generate certification for SSL
+
+```bash
+mkdir nginx/cert
+cd nginx/cert
+openssl req -new -days 365 -x509 -nodes -keyout cert.key -out cert.crt
+```
+
+
+### build and start container
+
 `docker-compose build`
 
 `docker-compose up -d`
-
-execute container as foreground process
-
-`docker-compose up`
 
 ## connect to container 
 
 `docker-compose ps`
 
-## login to node container
+If nodeapp server is down, retry `docker-compose up -d`.
+
+## login to container
 
 ### login to nodeapp
 `docker exec -it nodeapp /bin/sh`
@@ -24,18 +33,19 @@ execute container as foreground process
 ### login to nginx
 `docker exec -it nginx /bin/sh`
 
-## stop & start container
-
-`docker-compose stop`
-`docker-compose start`
 
 ## api path
 
-`http://127.0.0.1:8080/api
+`https://127.0.0.1/api`
 
 ### check api
 
-curl -X GET http://127.0.0.1:8080/api/version
+`curl -X GET https://127.0.0.1/api/version`
+
+
+## control panel
+
+`https://127.0.0.1`
 
 
 ## how to develop server

@@ -15,6 +15,8 @@ const router = Express.Router();
 const upload = multer({ dest: uploaddir });
 
 let defaultUser:userType;
+const videourlroot = '/videos';
+const outdir = 'out';
 
 userModel.findOne({ id: 'a' }, (err: any, user: userType) => {
   defaultUser = user;
@@ -77,7 +79,7 @@ router.post(
           const video = new Video({
             id: uuid,
             user: defaultUser,
-            url: `/${uuid}/video.m3u8`,
+            url: `${videourlroot}/${uuid}/video.m3u8`,
             vaild: true,
             rank: 1,
             comments: [],
@@ -89,8 +91,8 @@ router.post(
           });
 
           // create directory in output directory
-          fs.mkdirSync(`out/${uuid}`);
-          const output = `out/${uuid}/video.m3u8`;
+          fs.mkdirSync(`${outdir}/${uuid}`);
+          const output = `${outdir}/${uuid}/video.m3u8`;
           // do ffmpeg (conver mp4 to m3u8)
           ffmpeg(fs.createReadStream(req.file.path))
           .outputOptions([
@@ -168,9 +170,9 @@ router.put(
         doc.save();
         return res.json(doc);
       });
-    } else {
-      return res.send(400);
     }
+
+    return res.send(400);
   },
 );
 
@@ -302,11 +304,11 @@ router.delete(
 );
 
 function findTags(message: string): string[] {
-  let tags: string[] = [];
+  let tags: string[]|null = [];
   if (message) {
     tags = message.match(/\#[^\s]+/g);
   }
-  return tags;
+  return tags || [];
 }
 
 export default router;
