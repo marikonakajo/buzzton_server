@@ -5,6 +5,7 @@ buzztone server
 ## how to start server
 
 `docker-compose build`
+
 `docker-compose up -d`
 
 execute container as foreground process
