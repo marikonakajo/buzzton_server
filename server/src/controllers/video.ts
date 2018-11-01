@@ -8,19 +8,15 @@ import * as ffmpeg from 'fluent-ffmpeg';
 import logger from '../util/logger';
 
 import video, { default as Video, videoType } from '../models/video';
-import { default as userModel, userType, commentType, commentModel } from '../models/user';
+import { default as userModel, commentType, commentModel } from '../models/user';
 
 const uploaddir = path.join('upload');
 const router = Express.Router();
 const upload = multer({ dest: uploaddir });
 
-let defaultUser:userType;
+// let defaultUser:userType;
 const videourlroot = '/videos';
 const outdir = 'out';
-
-userModel.findOne({ id: 'a' }, (err: any, user: userType) => {
-  defaultUser = user;
-});
 
 /**
  * Response video lists
@@ -28,6 +24,7 @@ userModel.findOne({ id: 'a' }, (err: any, user: userType) => {
 router.get(
   '/',
   (req: Express.Request, res: Express.Response) => {
+    logger.debug(req.session!['user']);
     video.find()
     .populate('user')
     .exec((err: any, docs: videoType[]) => {
@@ -78,7 +75,7 @@ router.post(
 
           const video = new Video({
             id: uuid,
-            user: defaultUser,
+            user: req.session!['user'],
             url: `${videourlroot}/${uuid}/video.m3u8`,
             vaild: true,
             rank: 1,
@@ -116,7 +113,8 @@ router.post(
             });
           })
           .on('end', (stdout, stderr) => {
-            logger.info(`Transcoding succeeded! video-id:${uuid}, uploaded by ${defaultUser.name}`);
+            logger.info(`Transcoding succeeded! video-id:${uuid},` +
+            ` uploaded by ${req.session!['user'].name}`);
 
             // save
             video.save((err: any) => {
@@ -219,7 +217,7 @@ router.post(
       const videoId = req.params.id;
       const message = req.body.message;
       const comment: commentType = <commentType>new commentModel(
-        { text: message, user: defaultUser, like: 0 });
+        { text: message, user: req.session!['user'], like: 0 });
       video.findOne({ vaild:true, id: videoId })
       .exec((err: any, doc: videoType) => {
         if (doc) {

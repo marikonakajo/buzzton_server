@@ -6,6 +6,10 @@ import * as connectMongo from 'connect-mongo';
 import * as bluebird from 'bluebird';
 import * as mongoose from 'mongoose';
 
+import logger from './util/logger';
+
+// const mode = process.env.NODE_ENV;
+
 const mongoStore = connectMongo(expressSession);
 // Connect to MongoDB // process.env.MONGODB_URI ||
 const mongoUrl = 'mongodb://mongodb/buzztondb';
@@ -36,7 +40,26 @@ app.use(expressSession({
     autoReconnect: true,
   }),
 }));
-// const mode = process.env.NODE_ENV;
+
+// auth middleware
+import { default as userModel, userType } from './models/user';
+app.use((
+  req: Express.Request,
+  res: Express.Response,
+  next: Express.NextFunction,
+  ) => {
+  // verify auth credentials
+  const base64Credentials =  req.headers.authorization!.split(' ')[1];
+  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+  const [userid] = credentials.split(':');
+
+  logger.debug(userid);
+  userModel.findOne({ id: userid }, (err: any, user: userType) => {
+    req.session!['user'] = user;
+  });
+
+  next();
+});
 
 /**
  * routes
