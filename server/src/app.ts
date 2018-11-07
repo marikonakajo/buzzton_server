@@ -49,14 +49,16 @@ app.use((
   next: Express.NextFunction,
   ) => {
   // verify auth credentials
-  const base64Credentials =  req.headers.authorization!.split(' ')[1];
-  const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-  const [userid] = credentials.split(':');
+  if (req.headers.authorization) {
+    const base64Credentials =  req.headers.authorization!.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [userid] = credentials.split(':');
 
-  logger.debug(userid);
-  userModel.findOne({ id: userid }, (err: any, user: userType) => {
-    req.session!['user'] = user;
-  });
+    logger.debug(userid);
+    userModel.findOne({ id: userid }, (err: any, user: userType) => {
+      req.session!['user'] = user;
+    });
+  }
 
   next();
 });
