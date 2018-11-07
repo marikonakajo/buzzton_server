@@ -12,6 +12,11 @@ cd nginx/cert
 openssl req -new -days 365 -x509 -nodes -keyout cert.key -out cert.crt
 ```
 
+### generate htpasswd (for testing)
+```bash
+cd nginx
+echo "USERNAME:$(openssl passwd -apr1 PASSWORD)" > .htpasswd
+```
 
 ### build and start container
 
@@ -32,6 +37,9 @@ If nodeapp server is down, retry `docker-compose up -d`.
 
 ### login to nginx
 `docker exec -it nginx /bin/sh`
+
+### login to mongodb
+`docker exec -it mongodb /bin/sh`
 
 
 ## api path
