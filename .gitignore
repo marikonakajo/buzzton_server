@@ -2,3 +2,4 @@
 /data/mongo/
 .DS_Store
 /nginx/cert/
+/nginx/.htpasswd
