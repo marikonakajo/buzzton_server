@@ -1,0 +1,7 @@
+applications:
+- name: buzzton-server
+  path: .
+  memory: 256M
+  buildpacks:
+    - https://github.com/motokazu/nodejs-buildpack-ffmpeg.git
+  command: node index.js

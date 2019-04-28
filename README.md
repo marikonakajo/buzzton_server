@@ -1,67 +1,38 @@
-# buzzton_server
+# build and start buzzton server
 
-buzztone server
-
-## how to start server
-
-### generate certification for SSL
+1. install packages
 
 ```bash
-mkdir nginx/cert
-cd nginx/cert
-openssl req -new -days 365 -x509 -nodes -keyout cert.key -out cert.crt
+yarn install
 ```
 
-### generate htpasswd (for testing)
+2. build app
+
 ```bash
-cd nginx
-echo "USERNAME:$(openssl passwd -apr1 PASSWORD)" > .htpasswd
+yarn run build
 ```
 
-### build and start container
+3. push to cloud
 
-`docker-compose build`
+```bash
+ibmcloud cf push
+```
 
-`docker-compose up -d`
-
-## connect to container 
-
-`docker-compose ps`
-
-If nodeapp server is down, retry `docker-compose up -d`.
-
-## login to container
-
-### login to nodeapp
-`docker exec -it nodeapp /bin/sh`
-
-### login to nginx
-`docker exec -it nginx /bin/sh`
-
-### login to mongodb
-`docker exec -it mongodb /bin/sh`
+4. If you don't have mongoDB cluster, create cluster first.
 
 
-## api path
+# how to setup mongodb cluster
 
-`https://127.0.0.1/api`
+1. visit https://www.mongodb.com/cloud/atlas
 
-### check api
+2. Create free cluster, copy your cluster uri and paste environment variables as MONGODB_URI.
+ (add your cloud ip to whitelist)
 
-`curl -X GET https://127.0.0.1/api/version`
+refer https://cloud.ibm.com/docs/infrastructure/hardware-firewall-dedicated?topic=hardware-firewall-dedicated-ibm-cloud-ip-ranges
 
+3. prepare db and collections
 
-## control panel
+db : buzztondb
+collection : users
+ insert initial user : { "id" : "<user id>" , "name" : "<user name>" }
 
-`https://127.0.0.1`
-
-
-## how to develop server
-
-exec the following command in server directory
-
-`yarn run dev`
-
-## compile code for production
-
-`yarn run build`

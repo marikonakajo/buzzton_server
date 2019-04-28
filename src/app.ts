@@ -5,14 +5,15 @@ import * as bodyParser from 'body-parser';
 import * as connectMongo from 'connect-mongo';
 import * as bluebird from 'bluebird';
 import * as mongoose from 'mongoose';
+import * as path from 'path';
 
 import logger from './util/logger';
 
 // const mode = process.env.NODE_ENV;
 
 const mongoStore = connectMongo(expressSession);
-// Connect to MongoDB // process.env.MONGODB_URI ||
-const mongoUrl = 'mongodb://mongodb/buzztondb';
+// Connect to MongoDB
+const mongoUrl = process.env.MONGODB_URI || 'mongodb://mongodb/buzztondb';
 (<any>mongoose).Promise = bluebird;
 mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
@@ -63,13 +64,17 @@ app.use((
   next();
 });
 
+/** public directory */
+const outdir = path.join('out');
+app.use('/out', Express.static(outdir));
+
 /**
  * routes
  */
 import * as videoRoute from './controllers/video';
 
 // add routes
-app.use('/videos', videoRoute.default);
+app.use('/api/videos', videoRoute.default);
 
 app.get(
   '/version',

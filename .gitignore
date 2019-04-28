@@ -1,5 +1,4 @@
 /.vscode/
-/data/mongo/
+/node_modules/
 .DS_Store
-/nginx/cert/
-/nginx/.htpasswd
+index.js

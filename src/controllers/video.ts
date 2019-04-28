@@ -15,8 +15,15 @@ const router = Express.Router();
 const upload = multer({ dest: uploaddir });
 
 // let defaultUser:userType;
-const videourlroot = '/videos';
-const outdir = 'out';
+const outdir = path.join('out');
+
+// create temp directory
+if (!fs.existsSync(uploaddir)) {
+  fs.mkdirSync(uploaddir);
+}
+if (!fs.existsSync(outdir)) {
+  fs.mkdirSync(outdir);
+}
 
 /**
  * Response video lists
@@ -76,7 +83,7 @@ router.post(
           const video = new Video({
             id: uuid,
             user: req.session!['user'],
-            url: `${videourlroot}/${uuid}/video.m3u8`,
+            url: `/${outdir}/${uuid}/video.m3u8`,
             vaild: true,
             rank: 1,
             comments: [],
