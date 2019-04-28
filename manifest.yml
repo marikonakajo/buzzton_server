@@ -1,0 +1,8 @@
+applications:
+- name: buzzton-server
+  path: .
+  memory: 256M
+  buildpack: https://github.com/OsmosisAI/nodejs-buildpack-ffmpeg.git
+  command: node index.js
+  services:
+  - buzzton-cloudant

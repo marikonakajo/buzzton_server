@@ -1,67 +1,26 @@
-# buzzton_server
 
-buzztone server
+How to setup buzzton server to ibmcloud ?
 
-## how to start server
+# requirements
 
-### generate certification for SSL
-
+cloudant service
 ```bash
-mkdir nginx/cert
-cd nginx/cert
-openssl req -new -days 365 -x509 -nodes -keyout cert.key -out cert.crt
+ibmcloud cf create-service cloudantNoSQLDB Lite buzzton-cloudant
 ```
 
-### generate htpasswd (for testing)
+# build and start buzzton server
+
+1. install packages
 ```bash
-cd nginx
-echo "USERNAME:$(openssl passwd -apr1 PASSWORD)" > .htpasswd
+yarn install
 ```
 
-### build and start container
+2. build app
+```bash
+yarn run build
+```
 
-`docker-compose build`
-
-`docker-compose up -d`
-
-## connect to container 
-
-`docker-compose ps`
-
-If nodeapp server is down, retry `docker-compose up -d`.
-
-## login to container
-
-### login to nodeapp
-`docker exec -it nodeapp /bin/sh`
-
-### login to nginx
-`docker exec -it nginx /bin/sh`
-
-### login to mongodb
-`docker exec -it mongodb /bin/sh`
-
-
-## api path
-
-`https://127.0.0.1/api`
-
-### check api
-
-`curl -X GET https://127.0.0.1/api/version`
-
-
-## control panel
-
-`https://127.0.0.1`
-
-
-## how to develop server
-
-exec the following command in server directory
-
-`yarn run dev`
-
-## compile code for production
-
-`yarn run build`
+3. push to cloud
+```bash
+ibmcloud cf push
+```
