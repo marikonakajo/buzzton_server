@@ -34,5 +34,5 @@ refer https://cloud.ibm.com/docs/infrastructure/hardware-firewall-dedicated?topi
 
 db : buzztondb
 collection : users
- insert initial user : { "id" : "<user id>" , "name" : "<user name>" }
+ insert initial user : { "id" : "user id" , "name" : "user name" }
 
